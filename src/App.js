@@ -69,11 +69,75 @@ export default function App() {
 
   const shareFile = (file) => {
     // Implement the logic to share the file
-    console.log("Sharing file:", file);
+    const shareTitle = file.name;
+    const shareUrl = file.path;
+  
+    // Share on Facebook
+    const shareOnFacebook = () => {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`, '_blank');
+    };
+  
+    // Share on Twitter
+    const shareOnTwitter = () => {
+      window.open(`https://twitter.com/intent/tweet?text=${shareTitle}&url=${shareUrl}`, '_blank');
+    };
+  
+    // Share on WhatsApp
+    const shareOnWhatsApp = () => {
+      window.open(`https://wa.me/?text=${shareTitle} - ${shareUrl}`, '_blank');
+    };
+  
+    // Open share options in a new window or tab
+    const shareOptions = [
+      { label: 'Facebook', action: shareOnFacebook },
+      { label: 'Twitter', action: shareOnTwitter },
+      { label: 'WhatsApp', action: shareOnWhatsApp }
+    ];
+  
+    // Generate the share buttons
+    const shareButtons = shareOptions.map(option => (
+      <button
+        key={option.label}
+        style={styles.controlButton}
+        onClick={option.action}
+      >
+        Share to {option.label}
+      </button>
+    ));
+  
+    // Display the share options in a modal
+    const shareModal = (
+      <div style={styles.modal}>
+        <div style={styles.modalContent}>
+          <div style={styles.modalHeader}>
+            <p style={{ fontWeight: "bold" }}>Share File</p>
+            <button
+              style={styles.closeButton}
+              onClick={() => setShareModalOpen(false)}
+            >
+              Close
+            </button>
+          </div>
+          <div style={styles.modalBody}>
+            <p>{shareTitle}</p>
+            <p>{shareUrl}</p>
+            {shareButtons}
+          </div>
+        </div>
+      </div>
+    );
+  
+    // Render the share modal
+    setShareModalOpen(true);
+    setShareModalContent(shareModal);
   };
+  
+  const [isShareModalOpen, setShareModalOpen] = useState(false);
+  const [shareModalContent, setShareModalContent] = useState(null);
 
   return (
     <>
+      {isShareModalOpen && shareModalContent}
       {showChartModal && (
         <div style={styles.modal}>
           <div style={styles.modalContent}>
@@ -213,6 +277,16 @@ export default function App() {
             >
               Delete
             </button>
+            <button
+                  style={styles.controlButton}
+                  onClick={() => {
+                    if (selectedFile) {
+                      shareFile(selectedFile);
+                    }
+                  }}
+                >
+                  Share
+              </button>
           </div>
 
           <div style={styles.fileContainer}>
